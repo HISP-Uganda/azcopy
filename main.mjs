@@ -123,7 +123,7 @@ async function copyBlobExample(pe) {
         });
         fs.writeFileSync(`Uganda_OSA_${pe}.csv`, csv);
         const result = await runAzCopy(
-            `copy "Uganda_OSA_2024Q1.csv" "${process.env.AZURE_STORAGE_ACCOUNT_SAS_URL}"`
+            `copy "Uganda_OSA_${pe}.csv" "${process.env.AZURE_STORAGE_ACCOUNT_SAS_URL}"`
         );
         console.log("AzCopy operation completed:", result);
     } catch (error) {
