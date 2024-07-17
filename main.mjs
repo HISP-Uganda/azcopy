@@ -3,9 +3,8 @@ import axios from "axios";
 import fs from "fs";
 import converter from "json-2-csv";
 import { program } from "commander";
+import mapping from "./mapping.json" with { type: "json" };
 import "dotenv/config";
-
-const mapping = import("./mapping.json", { with: { type: "json" } });
 
 const api = axios.create({
     baseURL: process.env.DHIS2_URL,
@@ -84,7 +83,6 @@ async function copyBlobExample(pe) {
     let allDataValues = [];
     try {
         const validDataElements = Object.keys(mapping);
-
         const {
             data: { organisationUnits },
         } = await api.get(
@@ -119,7 +117,6 @@ async function copyBlobExample(pe) {
                     value,
                 }))
             );
-            break;
         }
         const csv = converter.json2csv(allDataValues, {
             fields: Object.keys(allDataValues[0]),
