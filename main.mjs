@@ -107,15 +107,25 @@ async function copyBlobExample(pe) {
                 validDataElements.includes(dataElement)
             );
             allDataValues = allDataValues.concat(
-                filtered.map(({ dataElement, period, orgUnit, value }) => ({
-                    description: "",
-                    reportingUnit: "UGA",
-                    facilityCode: orgUnit,
-                    productCode: dataElement,
-                    productDescription: "",
-                    reportingPeriod: period,
-                    value,
-                }))
+                filtered.flatMap(({ dataElement, period, orgUnit, value }) => {
+                    if (
+                        mapping[dataElement] &&
+                        mapping[dataElement]["dataPoint"]
+                    ) {
+                        return {
+                            description: "",
+                            reportingUnit: "UGA",
+                            facilityCode: orgUnit,
+                            productCode: mapping[dataElement]["code"],
+                            productDescription:
+                                mapping[dataElement]["description"],
+                            dataPoint: mapping[dataElement]["dataPoint"],
+                            reportingPeriod: period,
+                            value,
+                        };
+                    }
+                    return [];
+                })
             );
         }
         const csv = converter.json2csv(allDataValues, {

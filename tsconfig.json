@@ -4,5 +4,6 @@
         "target": "ESNext",
         "moduleResolution": "NodeNext"
     },
-    "include": ["**/*.ts", "**/*.mjs"]
+    "include": ["**/*.ts", "**/*.mjs"],
+    "exclude": ["node_modules"]
 }

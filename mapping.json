@@ -1,38 +1,144 @@
 {
-    "E6bQbrXhKgU": {},
-    "nySjHa5fLGm": {},
-    "RQ1tlXaPcar": {},
-    "UMNerD5NBOw": {},
+    "E6bQbrXhKgU": {
+        "code": 10286,
+        "dataPoint": "Quantity used",
+        "description": "HIV 1+2 - Determine Complete HIV Kit - accessories included - 100 tests - 7D2343SET"
+    },
+    "nySjHa5fLGm": {
+        "code": 10286,
+        "dataPoint": "Stock out days",
+        "description": "HIV 1+2 - Determine Complete HIV Kit - accessories included - 100 tests - 7D2343SET"
+    },
+    "RQ1tlXaPcar": {
+        "code": 10286,
+        "dataPoint": "Stock on hand",
+        "description": "HIV 1+2 - Determine Complete HIV Kit - accessories included - 100 tests - 7D2343SET"
+    },
+    "UMNerD5NBOw": {
+        "code": 10286,
+        "description": "HIV 1+2 - Determine Complete HIV Kit - accessories included - 100 tests - 7D2343SET"
+    },
 
-    "VkjK3NWHyJR": {},
-    "whzcuwyG1mb": {},
-    "L2exKCG9ZxY": {},
-    "Ea8UVuVDfa5": {},
+    "VkjK3NWHyJR": {
+        "code": 10867,
+        "dataPoint": "Quantity used",
+        "description": "Dolutegravir/Lamivudine/Tenofovir 50/300/300mg tablet, container of 90 tablets - no carton"
+    },
+    "whzcuwyG1mb": {
+        "code": 10867,
+        "dataPoint": "Stock out days",
+        "description": "Dolutegravir/Lamivudine/Tenofovir 50/300/300mg tablet, container of 90 tablets - no carton"
+    },
+    "L2exKCG9ZxY": {
+        "code": 10867,
+        "dataPoint": "Stock on hand",
+        "description": "Dolutegravir/Lamivudine/Tenofovir 50/300/300mg tablet, container of 90 tablets - no carton"
+    },
+    "Ea8UVuVDfa5": {
+        "code": 10867,
+        "description": "Dolutegravir/Lamivudine/Tenofovir 50/300/300mg tablet, container of 90 tablets - no carton"
+    },
 
-    "oCtCwUE7utd": {},
-    "SBbhtV3VJvj": {},
-    "HhhkiZDx1vo": {},
-    "Uk5CFlynuP8": {},
+    "oCtCwUE7utd": {
+        "code": 10309,
+        "dataPoint": "Quantity used",
+        "description": "Malaria Rapid Diagnostic Test Kit - Pf only - 25 Tests"
+    },
+    "SBbhtV3VJvj": {
+        "code": 10309,
+        "dataPoint": "Stock out days",
+        "description": "Malaria Rapid Diagnostic Test Kit - Pf only - 25 Tests"
+    },
+    "HhhkiZDx1vo": {
+        "code": 10309,
+        "dataPoint": "Stock on hand",
+        "description": "Malaria Rapid Diagnostic Test Kit - Pf only - 25 Tests"
+    },
+    "Uk5CFlynuP8": {
+        "code": 10309,
+        "description": "Malaria Rapid Diagnostic Test Kit - Pf only - 25 Tests"
+    },
 
-    "RIBMopGoWHl": {},
-    "pDoc60OZDbH": {},
-    "fy34HLoHa0x": {},
-    "Q6ne3khBitH": {},
+    "RIBMopGoWHl": {
+        "code": 10005,
+        "dataPoint": "Quantity used",
+        "description": "Artemether/Lumefantrine 20/120mg 24 tablet, pack of 30 blisters"
+    },
+    "pDoc60OZDbH": {
+        "code": 10005,
+        "dataPoint": "Stock out days",
+        "description": "Artemether/Lumefantrine 20/120mg 24 tablet, pack of 30 blisters"
+    },
+    "fy34HLoHa0x": {
+        "code": 10005,
+        "dataPoint": "Stock on hand",
+        "description": "Artemether/Lumefantrine 20/120mg 24 tablet, pack of 30 blisters"
+    },
+    "Q6ne3khBitH": {
+        "code": 10005,
+        "description": "Artemether/Lumefantrine 20/120mg 24 tablet, pack of 30 blisters"
+    },
 
-    "LwQS4dn6CNo": {},
-    "YBrTKDdbjeZ": {},
-    "tZhzAESh4sL": {},
-    "T0TejU8ASOy": {},
+    "LwQS4dn6CNo": {
+        "code": 17213,
+        "dataPoint": "Quantity used",
+        "description": "Xpert MTB/RIF ULTRA Cartridge 50"
+    },
+    "YBrTKDdbjeZ": {
+        "code": 17213,
+        "dataPoint": "Stock out days",
+        "description": "Xpert MTB/RIF ULTRA Cartridge 50"
+    },
+    "tZhzAESh4sL": {
+        "code": 17213,
+        "dataPoint": "Stock on hand",
+        "description": "Xpert MTB/RIF ULTRA Cartridge 50"
+    },
+    "T0TejU8ASOy": {
+        "code": 17213,
+        "description": "Xpert MTB/RIF ULTRA Cartridge 50"
+    },
 
-    "tViJTDJyvRx": {},
-    "XcKSEjnZEut": {},
-    "LIyDtNQVsGo": {},
-    "jEjYbOgLaEI": {},
+    "tViJTDJyvRx": {
+        "code": 15231,
+        "dataPoint": "Quantity used",
+        "description": "Ethambutol/Isoniazid/Pyrazinamide/Rifampicin 275/75/400/150mg 28 tablet, pack of 24 blisters (672)"
+    },
+    "XcKSEjnZEut": {
+        "code": 15231,
+        "dataPoint": "Stock out days",
+        "description": "Ethambutol/Isoniazid/Pyrazinamide/Rifampicin 275/75/400/150mg 28 tablet, pack of 24 blisters (672)"
+    },
+    "LIyDtNQVsGo": {
+        "code": 15231,
+        "dataPoint": "Stock on hand",
+        "description": "Ethambutol/Isoniazid/Pyrazinamide/Rifampicin 275/75/400/150mg 28 tablet, pack of 24 blisters (672)"
+    },
+    "jEjYbOgLaEI": {
+        "code": 15231,
+        "description": "Ethambutol/Isoniazid/Pyrazinamide/Rifampicin 275/75/400/150mg 28 tablet, pack of 24 blisters (672)"
+    },
 
-    "FNT0AWnEok7": {},
-    "eSjJv1tjFWu": {},
-    "O3hT4aIhzLi": {},
-    "Jdb1lBj4uoP": {},
+    "FNT0AWnEok7": {
+        "code": 10100,
+        "dataPoint": "Quantity used",
+
+        "description": "Artesunate 60mg powder for solution for injection, 1 vial"
+    },
+    "eSjJv1tjFWu": {
+        "code": 10100,
+        "dataPoint": "Stock out days",
+        "description": "Artesunate 60mg powder for solution for injection, 1 vial"
+    },
+    "O3hT4aIhzLi": {
+        "code": 10100,
+        "dataPoint": "Stock on hand",
+        "description": "Artesunate 60mg powder for solution for injection, 1 vial"
+    },
+    "Jdb1lBj4uoP": {
+        "code": 10100,
+        "description": "Artesunate 60mg powder for solution for injection, 1 vial"
+    },
 
     "yIWazgZwraU": {},
     "Q0KPtGrBoQb": {},
