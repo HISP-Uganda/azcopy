@@ -4,7 +4,9 @@ import fs from "fs";
 import converter from "json-2-csv";
 import { program } from "commander";
 import mapping from "./mapping.json" with { type: "json" };
+import mapping_osa from "./mapping_osa.json" with { type: "json" };
 import "dotenv/config";
+import _ from "lodash";
 
 const api = axios.create({
     baseURL: process.env.DHIS2_URL,
@@ -31,109 +33,149 @@ function runAzCopy(command) {
 }
 
 async function fetchFacilities() {
-    let pageCount = 1;
-    let page = 0;
-    let allFacilities = [];
-    while (page < pageCount) {
-        console.log(`Working on page ${page + 1} of ${pageCount}`);
-        const {
-            data: {
-                organisationUnits,
-                pager: { pageCount: currentCount },
-            },
-        } = await api.get(`organisationUnits.json`, {
-            params: {
-                page: ++page,
-                level: 5,
-                pageSize: 1000,
-                fields: "id,name,code,parent[parent[id,name,code]],organisationUnitGroups[id,name]",
-            },
-        });
+    const {
+        data: {
+            listGrid: { headers, rows },
+        },
+    } = await api.get("sqlViews/qS5ka4GEiN7/data", {
+        params: { paging: false },
+    });
 
-        allFacilities = allFacilities.concat(
-            organisationUnits.map(
-                ({
-                    id: facility_id,
-                    name: facility_name,
-                    parent,
-                    organisationUnitGroups,
-                }) => {
-                    const facility_type =
-                        organisationUnitGroups.find(
-                            ({ id }) => id === "ou6is72lmDC"
-                        )?.name ?? "";
-                    return {
-                        facility_name,
-                        facility_code: facility_id,
-                        district: parent.parent.id,
-                        facility_id,
-                        district_name: parent.parent.name,
-                        district_code: parent.parent.id,
-                        facility_type,
-                    };
-                }
-            )
-        );
-        pageCount = currentCount;
-    }
-    return allFacilities;
+    const facilityCodeIndex = headers.findIndex(({ name }) => name === "uid");
+    const facilityLevelIndex = headers.findIndex(
+        ({ name }) => name === "hflevel"
+    );
+    const facilityNameIndex = headers.findIndex(({ name }) => name === "name");
+    const facilityOwnerShipTypeIndex = headers.findIndex(
+        ({ name }) => name === "ownership"
+    );
+    const geographyIdentifier1Index = headers.findIndex(
+        ({ name }) => name === "region"
+    );
+    const geographyIdentifier2Index = headers.findIndex(
+        ({ name }) => name === "district"
+    );
+    const facilityTypeIndex = headers.findIndex(({ name }) => name === "uid");
+    const facilityOperationalStatusIndex = headers.findIndex(
+        ({ name }) => name === "status"
+    );
+
+    return rows.map((row) => {
+        return {
+            FacilityCode: row[facilityCodeIndex],
+            FacilityLevel: row[facilityLevelIndex],
+            FacilityName: row[facilityNameIndex],
+            FacilityOwnerShipType: row[facilityOwnerShipTypeIndex],
+            GeographyIdentifier1: row[geographyIdentifier1Index],
+            GeographyIdentifier2: row[geographyIdentifier2Index],
+            FacilityType: "Health Facility",
+            FacilityOperationalStatus: row[facilityOperationalStatusIndex],
+        };
+    });
 }
 
-async function copyBlobExample(pe) {
-    let allDataValues = [];
+async function copyBlobExample(pe = "LAST_MONTH") {
     try {
-        const validDataElements = Object.keys(mapping);
-        const {
-            data: { organisationUnits },
-        } = await api.get(
-            `organisationUnits.json?fields=id,name&level=3&pageSize=3&order=name:asc`
+        // const validDataElements = Object.keys(mapping);
+        const currentDate = new Date();
+
+        const stockOnHandDataElements = Object.entries(mapping_osa)
+            .flatMap(([de, val]) => {
+                if (val.dataPoint === "Stock on hand") {
+                    return de;
+                }
+                return [];
+            })
+            .join(";");
+        const quantityUsedDataElements = Object.entries(mapping_osa)
+            .flatMap(([de, val]) => {
+                if (val.dataPoint === "Quantity used") {
+                    return de;
+                }
+                return [];
+            })
+            .join(";");
+
+        const stockOnHandParams = new URLSearchParams();
+        stockOnHandParams.append("dimension", `dx:${stockOnHandDataElements}`);
+        stockOnHandParams.append("dimension", `ou:LEVEL-5`);
+        stockOnHandParams.append("dimension", `pe:${pe}`);
+
+        const quantityUsedParams = new URLSearchParams();
+        quantityUsedParams.append(
+            "dimension",
+            `dx:${quantityUsedDataElements}`
         );
-        let total = 0;
-        for (const { id, name } of organisationUnits) {
-            console.log(
-                `Querying data for ${name} (${++total} of ${organisationUnits.length})`
-            );
-            const param = new URLSearchParams();
-            param.append("period", pe);
-            param.append("orgUnit", id);
-            param.append("children", "true");
-            param.append("dataSet", "VDhwrW9DiC1");
+        quantityUsedParams.append("dimension", `ou:LEVEL-5`);
+        quantityUsedParams.append("dimension", "pe:LAST_3_MONTHS");
+        const { data: quantityUsed } = await api.get(
+            `analytics.json?${quantityUsedParams.toString()}`
+        );
+        const { data: stockOnHand } = await api.get(
+            `analytics.json?${stockOnHandParams.toString()}`
+        );
+        const quantityUsedAgain = Object.entries(
+            _.groupBy(quantityUsed.rows, (x) => `${x[0]}${x[1]}`)
+        ).flatMap(([ke, values]) =>
+            _.orderBy(values, (x) => x[2], "desc").flatMap((row, index) => {
+                return {
+                    ReportingUnit: "UGA",
+                    FacilityCode: row[1],
+                    ProductCode: mapping_osa[row[0]].code,
+                    DataPoint: index === 2 ? 13 : index === 1 ? 12 : 11,
+                    CurrentReportingPeriod: row[2],
+                    Value: Number(row[3]),
+                };
+            })
+        );
 
-            const {
-                data: { dataValues = [] },
-            } = await api.get(`dataValueSets.json?${param.toString()}`);
-
-            const filtered = dataValues.filter(({ dataElement }) =>
-                validDataElements.includes(dataElement)
-            );
-            allDataValues = allDataValues.concat(
-                filtered.flatMap(({ dataElement, period, orgUnit, value }) => {
-                    if (
-                        mapping[dataElement] &&
-                        mapping[dataElement]["dataPoint"]
-                    ) {
-                        return {
-                            description: "",
-                            reportingUnit: "UGA",
-                            facilityCode: orgUnit,
-                            productCode: mapping[dataElement]["code"],
-                            productDescription:
-                                mapping[dataElement]["description"],
-                            dataPoint: mapping[dataElement]["dataPoint"],
-                            reportingPeriod: period,
-                            value,
-                        };
-                    }
-                    return [];
-                })
-            );
-        }
-        const csv = converter.json2csv(allDataValues, {
-            fields: Object.keys(allDataValues[0]),
+        const allStock = stockOnHand.rows.flatMap((row) => {
+            return [
+                {
+                    ReportingUnit: "UGA",
+                    FacilityCode: row[1],
+                    ProductCode: mapping_osa[row[0]].code,
+                    DataPoint: 1061,
+                    CurrentReportingPeriod: row[2],
+                    Value: Number(row[3]),
+                },
+                {
+                    ReportingUnit: "UGA",
+                    FacilityCode: row[1],
+                    ProductCode: mapping_osa[row[0]].code,
+                    DataPoint: 1064,
+                    CurrentReportingPeriod: row[2],
+                    Value: "DHIS2",
+                },
+                {
+                    ReportingUnit: "UGA",
+                    FacilityCode: row[1],
+                    ProductCode: mapping_osa[row[0]].code,
+                    DataPoint: 1066,
+                    CurrentReportingPeriod: row[2],
+                    Value: Number(
+                        `${currentDate.getFullYear()}${String(currentDate.getMonth() + 1).padStart(2, "0")}${String(currentDate.getDate()).padStart(2, "0")}`
+                    ),
+                },
+            ];
         });
-        fs.writeFileSync(`Uganda_OSA_${pe}.csv`, csv);
+
+        const csv = converter.json2csv(allStock.concat(quantityUsedAgain), {
+            fields: [
+                "ReportingUnit",
+                "FacilityCode",
+                "ProductCode",
+                "DataPoint",
+                "CurrentReportingPeriod",
+                "Value",
+            ],
+        });
+        fs.writeFileSync(
+            `Uganda_OSA_${allStock[0].CurrentReportingPeriod}.csv`,
+            csv
+        );
         const result = await runAzCopy(
-            `copy "Uganda_OSA_${pe}.csv" "${process.env.AZURE_STORAGE_ACCOUNT_SAS_URL}"`
+            `copy "Uganda_OSA_${allStock[0].CurrentReportingPeriod}.csv" "${process.env.AZURE_STORAGE_ACCOUNT_SAS_URL}"`
         );
         console.log("AzCopy operation completed:", result);
     } catch (error) {
@@ -147,10 +189,20 @@ program
     .action(async () => {
         try {
             const facilities = await fetchFacilities();
+
             const csv = converter.json2csv(facilities, {
-                fields: Object.keys(facilities[0]),
+                fields: [
+                    "FacilityCode",
+                    "FacilityLevel",
+                    "FacilityName",
+                    "FacilityOwnerShipType",
+                    "GeographyIdentifier1",
+                    "GeographyIdentifier2",
+                    "FacilityType",
+                    "FacilityOperationalStatus",
+                ],
             });
-            fs.writeFileSync(`Uganda_OSA_Facilities.csv`, csv);
+            fs.writeFileSync(`Uganda_Facility.csv`, csv);
             const result = await runAzCopy(
                 `copy "Uganda_OSA_Facilities.csv" "${process.env.AZURE_STORAGE_ACCOUNT_SAS_URL}"`
             );
@@ -164,7 +216,7 @@ program
     .command("azcopy")
     .description("Copy using AzCopy ")
     .action(async () => {
-        await copyBlobExample("202401");
+        await copyBlobExample();
     });
 
 program.parse();
