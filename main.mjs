@@ -204,7 +204,7 @@ program
             });
             fs.writeFileSync(`Uganda_Facility.csv`, csv);
             const result = await runAzCopy(
-                `copy "Uganda_OSA_Facilities.csv" "${process.env.AZURE_STORAGE_ACCOUNT_SAS_URL}"`
+                `copy "Uganda_Facility.csv" "${process.env.AZURE_STORAGE_ACCOUNT_SAS_URL}"`
             );
             console.log("AzCopy operation completed:", result);
         } catch (error) {
